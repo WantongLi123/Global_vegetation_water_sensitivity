@@ -39,6 +39,34 @@ def read_data(path):
     print(log_string, path, 'Read data')
     return data
 
+def yearlytotal(year,lai, t2m, variable):
+    yearly_total = np.zeros((year, 360, 720)) * np.nan
+    variable[lai<=0.5] = np.nan
+    variable[t2m<=278.15] = np.nan
+
+    for row in range(360):
+        for col in range(720):
+            if np.isnan(variable[:, row, col]).all():
+                yearly_total[:, row, col] = np.nan
+            else:
+                for y in range(year):
+                    yearly_total[y, row, col] = np.nansum(variable[y*12:(y*12+12), row, col])
+    return (yearly_total)
+
+def slope_yearly(variable):
+    slope = np.zeros((360, 720)) * np.nan
+    for row in range(360):
+        for col in range(720):
+                if np.isnan(variable[:, row, col]).all() or np.all(variable[:, row, col]==0):
+                    slope[row, col] = np.nan
+                else:
+                    y = variable[:, row, col]
+                    y = y[~np.isnan(variable[:, row, col])]
+                    if len(y)>5:
+                        result = mk.original_test(y)  # mk2
+                        slope[row, col] = result.slope * 3 # trends per 3 years
+    return (slope)
+
 def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
     new_cmap = colors.LinearSegmentedColormap.from_list(
         'trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a=minval, b=maxval),
@@ -97,9 +125,13 @@ if __name__ == '__main__':
     vegetation_cover = np.repeat(vegetation_cover[np.newaxis, :, :], 4, axis=0)
     Slope[vegetation_cover < 0.05] = np.nan
 
-    multiTrends_obs = read_data(data_path('multi_trends_13vari_sfig5_obs_abnormal-LAI-SMstd_EnLAI.npy'))
-    TP_slope = multiTrends_obs[9,:,:] * 3 # precipitation trends are originally calculated per year, so that the data multiply 3 to be comparable with sensitivity trends from 3-year blocks
-
+    # calculate precipitation trends
+    T2M = read_data(data_path('CRUJRAtmp_444_0.5.npy'))
+    TP = read_data(data_path('CRUJRApre_444_0.5.npy'))
+    EnLAI = read_data(data_path('study2/original_data/LAI/EnLAI_5mean_1982_2018_monthly_0.5.npy'))
+    TP_total = yearlytotal(year,EnLAI[0:432, :, :], T2M[0:432, :, :], TP[0:432, :, :])
+    TP_slope = slope_yearly(TP_total)
+    
     # Precipitation Trend as x-axis; overall sensitivity as y-axis
     over_sensi = np.zeros((4,360,720)) * np.nan
     over_p = np.zeros((4,360,720)) * np.nan
