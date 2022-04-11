@@ -11,7 +11,6 @@ import numpy as np
 from matplotlib import rc
 import matplotlib.gridspec as gridspec
 import cartopy.crs as ccrs
-# from mpl_toolkits.basemap import Basemap
 import scipy.stats as stats
 from sklearn.linear_model import LinearRegression
 import math
@@ -25,7 +24,7 @@ unit = ' ($\mathregular{mm^{-1}}$)'
 
 def data_path(filename):
     file_path = "{path}/{filename}".format(
-        path="/Net/Groups/BGI/scratch/wantong",
+        path="...your_path.../",
         filename=filename
     )
     return file_path
@@ -34,19 +33,6 @@ def read_data(path):
     data = np.load(path)
     print(log_string, path, 'read data')
     return data
-
-# def graph(ax, target, **kwargs):
-#     my_map = Basemap(ax=ax, resolution='l', projection='cyl', llcrnrlon=-180, urcrnrlon=180, llcrnrlat=-60,
-#                      urcrnrlat=75)
-#     my_map.drawcoastlines(linewidth=0.2)
-#
-#     x = np.linspace(my_map.llcrnrlon, my_map.urcrnrlon, target.shape[1])
-#     y = np.linspace(my_map.llcrnrlat, my_map.urcrnrlat, target.shape[0])
-#     xx, yy = np.meshgrid(x, y)
-#
-#     cs = my_map.pcolor(xx, yy, target[::-1, :], **kwargs)
-#
-#     return(cs)
 
 def graph(ax, target, **kwargs):
     lon = np.arange(-180,180,0.5)
@@ -176,28 +162,24 @@ def bar_plot(ax, slope):
     return()
 
 if __name__ == '__main__':
-    log_string = 'Log draw_ndvi.py : '
+    log_string = 'Log: '
 
     # vegetation masks
-    irrigation = read_data(data_path('study2/original_data/irrigation/gmia_v5_aei_pct_360_720.npy'))
-    fvc = read_data(data_path('Proj1VD/original_data/Landcover/VCF5KYR/vcf5kyr_v001/VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
+    irrigation = read_data(data_path('gmia_v5_aei_pct_360_720.npy'))
+    fvc = read_data(data_path('VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
     vegetation_cover = np.nanmean(fvc[0, :, :, :] + fvc[1, :, :, :], axis=0)
 
     overall_sen = np.zeros((6,360,720)) * np.nan
     # overall sensitivity of obs
-    sensitivity_ens = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
+    sensitivity_ens = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
     sensitivity_ens[:, 3, :, :, :][sensitivity_ens[:, 4, :, :, :] > 0.01] = np.nan
     overall_sen[0:2, :, :] = sensitivity_ens[5, 3, 1:3, :, :]  # obs
 
     # overall sensitivity of model
-    sensitivity_ens = read_data(data_path('study2/results/result_april/TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))
+    sensitivity_ens = read_data(data_path('TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))
     sensitivity_ens[9, 3, :, :, :][sensitivity_ens[9, 4, :, :, :] > 0.01] = np.nan
     overall_sen[2:4, :, :] = sensitivity_ens[9, 3, 1:3, :, :]  # model
     # NaN masks by obs, model
-    # overall_sen[0, :, :][np.isnan(overall_sen[1, :, :])] = np.nan
-    # overall_sen[1, :, :][np.isnan(overall_sen[0, :, :])] = np.nan
-    # overall_sen[2, :, :][np.isnan(overall_sen[3, :, :])] = np.nan
-    # overall_sen[3, :, :][np.isnan(overall_sen[2, :, :])] = np.nan
     overall_sen[0:2, :, :][np.isnan(overall_sen[2:4, :, :])] = np.nan
     overall_sen[2:4, :, :][np.isnan(overall_sen[0:2, :, :])] = np.nan
 
@@ -228,9 +210,9 @@ if __name__ == '__main__':
     ticks2 = min, min / 2, 0, max / 2, max
 
     # parameters to make heatmaps
-    Temp = read_data(data_path('study2/results/result_april/EAR5-land_6vtrend_lai0.5_t2m5_1982_2017_yearlymean.npy'))[:,3, :, :] - 273.15
+    Temp = read_data(data_path('EAR5-land_6vtrend_lai0.5_t2m5_1982_2017_yearlymean.npy'))[:,3, :, :] - 273.15
     Temp = np.nanmean(Temp, axis=0)
-    Aridity = read_data(data_path('study2/results/result_april/EAR5-land_aridity_1982_2017_mean.npy'))
+    Aridity = read_data(data_path('EAR5-land_aridity_1982_2017_mean.npy'))
     Temp[Temp < 5] = 5
     Temp[Temp > 31] = 31
     Aridity[Aridity < 0] = 0
@@ -295,7 +277,7 @@ if __name__ == '__main__':
     ax7.text(-0.0051, 0.171, '(d) Model')
     ax7.text(-0.004, -0.05, '(g) Model-Obs')
     ax7.text(0.0009, -0.05, '(h) Corr(Model,Obs)')
-    plt.savefig('/Net/Groups/BGI/scratch/wantong/study2/results/result_oct/figure2/fig1.jpg', bbox_inches='tight')
+    plt.savefig('...your_path.../fig1.jpg', bbox_inches='tight')
 
 
     print('end')
