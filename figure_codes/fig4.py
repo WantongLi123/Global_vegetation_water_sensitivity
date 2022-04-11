@@ -59,7 +59,6 @@ def heat_map(arid, tem, c, x_axis,y_axis):
 
     return(data,num)
 
-# def heatmap(num, ax, data, ytick, xtick, ticks, label, cbar_kw={}, **kwargs):
 def heatmap(num, ax, data, ytick, xtick, **kwargs):
     im1 = ax.imshow(data, origin='lower', **kwargs)
     # cbar = ax.figure.colorbar(im1, ax=ax, ticks=ticks, **cbar_kw, extend='both')
@@ -84,31 +83,28 @@ if __name__ == '__main__':
     # plot trends of sensitivities binned by 5x5 arid x T2M
     Slope = np.zeros((4,360,720)) * np.nan
     P_value = np.zeros((4,360,720)) * np.nan
-    Slope[0:2,:,:] = read_data('/Net/Groups/BGI/scratch/wantong/study2/results/result_oct/ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[5,0,:,:,:]
-    P_value[0:2,:,:] = read_data('/Net/Groups/BGI/scratch/wantong/study2/results/result_oct/ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[5,1,:,:,:]
-    Slope[2:4,:,:] = read_data('/Net/Groups/BGI/scratch/wantong/study2/results/result_july/TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[0, :, :, :]
-    P_value[2:4,:,:] = read_data('/Net/Groups/BGI/scratch/wantong/study2/results/result_july/TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[1, :, :, :]
-    # Slope[P_value>0.1]=np.nan
-    # Slope[P_value<0]=np.nan
+    Slope[0:2,:,:] = read_data('ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[0,:,:,:] # obtain data from fig3.py
+    P_value[0:2,:,:] = read_data('ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[1,:,:,:]# obtain data from fig3.py
+    Slope[2:4,:,:] = read_data('TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[0, :, :, :]# obtain data from fig3.py
+    P_value[2:4,:,:] = read_data('TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy')[1, :, :, :]# obtain data from fig3.py
 
     # mask VCF<5%, irrigation>10%
-    irrigation = read_data(data_path('study2/original_data/irrigation/gmia_v5_aei_pct_360_720.npy'))
+    irrigation = read_data(data_path('gmia_v5_aei_pct_360_720.npy'))
     irrigation = np.repeat(irrigation[np.newaxis, :, :], 4, axis=0)
     Slope[irrigation > 10] = np.nan
-    fvc = read_data(data_path('Proj1VD/original_data/Landcover/VCF5KYR/vcf5kyr_v001/VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
+    fvc = read_data(data_path('VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
     vegetation_cover = np.nanmean(fvc[0,:,:,:]+fvc[1,:,:,:], axis=0)
     vegetation_cover = np.repeat(vegetation_cover[np.newaxis, :, :], 4, axis=0)
     Slope[vegetation_cover < 0.05] = np.nan
 
-    multiTrends_obs = read_data(data_path('study2/results/result_oct/multi_trends_13vari_sfig5_obs_abnormal-LAI-SMstd_EnLAI.npy'))
-    TP_slope = multiTrends_obs[9,:,:] * 3
+    multiTrends_obs = read_data(data_path('multi_trends_13vari_sfig5_obs_abnormal-LAI-SMstd_EnLAI.npy'))
+    TP_slope = multiTrends_obs[9,:,:] * 3 # precipitation trends are originally calculated per year, so that the data multiply 3 to be comparable with sensitivity trends from 3-year blocks
 
-
-    # SM/T Trend - overall sensitivity
+    # Precipitation Trend as x-axis; overall sensitivity as y-axis
     over_sensi = np.zeros((4,360,720)) * np.nan
     over_p = np.zeros((4,360,720)) * np.nan
-    over_sensi[0:2,:,:] = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[5, 3, 1:3, :, :]
-    over_p[0:2,:,:] = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[5, 4, 1:3, :, :]
+    over_sensi[0:2,:,:] = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[5, 3, 1:3, :, :]
+    over_p[0:2,:,:] = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[5, 4, 1:3, :, :]
     over_sensi[2:4, :, :] = read_data(data_path('study2/results/result_april/TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))[9, 3, 1:3, :, :]
     over_p[2:4,:,:] = read_data(data_path('study2/results/result_april/TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))[9, 4, 1:3, :, :]
     over_sensi[over_sensi <= 0] = np.nan
@@ -122,12 +118,13 @@ if __name__ == '__main__':
     yticks = [[0, 0.004, 0.008, 0.012, 0.016], [0, 0.0005, 0.001, 0.0015, 0.002],[0, 0.01, 0.02, 0.03, 0.04], [0, 0.006, 0.012, 0.018, 0.024]]
     yticks_new = yticks
 
+    # figure frame
     fig = plt.figure(figsize=(4,2), dpi=300, tight_layout=True)
     gs = gridspec.GridSpec(1, 5, width_ratios=[1,0.3,1,0.05,0.06], wspace=0)
     gs00 = gridspec.GridSpecFromSubplotSpec(3, 1, height_ratios=[0.3,1,0.3], subplot_spec=gs[4], wspace=0)
 
 
-    for v in [1,3]: # change here to [0,2] for surf
+    for v in [1,3]: # change here to [0,2] for near-surface soil moisture
         if v==0 or v==1:
             ax = fig.add_subplot(gs[0])
         elif v==2 or v==3:
@@ -150,8 +147,7 @@ if __name__ == '__main__':
         print(min,max)
         print(heatmap_data)
 
-        if v==0 or v==2:
-            norm = colors.TwoSlopeNorm(vmin=-0.00004, vcenter=0, vmax=0.00004)
+        norm = colors.TwoSlopeNorm(vmin=-0.00004, vcenter=0, vmax=0.00004)
         if v == 1 or v == 3:
             norm = colors.TwoSlopeNorm(vmin=-0.00004, vcenter=0, vmax=0.00004)
 
@@ -174,7 +170,7 @@ if __name__ == '__main__':
     cbar.ax.get_yaxis().labelpad = 15
     cbar.ax.set_ylabel('Trends of ' + tit[1] + unit1, rotation=270)
 
-    fig.savefig(data_path('study2/results/result_oct/figure2/fig4.jpg'),bbox_inches='tight')
+    fig.savefig(data_path('fig4.jpg'),bbox_inches='tight')
 
 
 
