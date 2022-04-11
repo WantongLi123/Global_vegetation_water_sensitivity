@@ -9,7 +9,11 @@ We use the demo for transparency and to demonstrate the application of sensitivi
 
 #### We are happy to answer your questions! Contact: Wantong Li (wantong@bgc-jena.mpg.de) 
 
-### The guide of the demo for sensitivity analysis
+### The guide of demo_of_sensitivity_analysis
 
+### The guide of figure_codes
+i) All processed data are in NumPy array format for Python;
+
+ii) Original data are shared with public links in the paper. 
 
 ### References
