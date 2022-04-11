@@ -5,7 +5,6 @@ warnings.filterwarnings('ignore')
 import os
 import matplotlib
 matplotlib.use('Agg')
-# matplotlib.font_manager._rebuild()
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import numpy as np
@@ -23,7 +22,7 @@ model = ['ISAM','LPJ-GUESS','LPX-Bern','VISIT','CABLE-POP','CLM5.0','JSBACH','JU
 
 def data_path(filename):
     file_path = "{path}/{filename}".format(
-        path="/Net/Groups/BGI/scratch/wantong",
+        path="...your_path...",
         filename=filename
     )
     return file_path
@@ -38,20 +37,6 @@ def graph(ax, target, **kwargs):
     ax.get_xaxis().set_ticks([])
     ax.get_yaxis().set_ticks([])
     return(cs)
-
-def heatmap_20(ax, data, **kwargs):
-    im1 = ax.pcolor(data, **kwargs)
-
-    ax.set_xticks([0,10,20])
-    ax.set_yticks([0,10,20])
-    ax.set_xticklabels([0, 1, 4])
-    ax.set_yticklabels([5,15,30])
-
-    ax.set_xlabel('Aridity')
-    ax.set_ylabel('Temperature ($^\circ$C)')
-
-    ax.tick_params(top=False, bottom=True, labeltop=False, labelbottom=True)
-    return(im1)
 
 def interquantile_plot(ax, n, x_new, x, y, label, color):
     y1 = np.zeros(n) * np.nan
@@ -80,21 +65,21 @@ def interquantile_plot1(ax, n, x_new, x, y, color, width, legend, linestyle):
     return(ax,line)
 
 if __name__ == '__main__':
-    log_string = 'Log draw_ndvi.py : '
+    log_string = 'Log: '
 
     # vegetation masks
-    irrigation = read_data(data_path('study2/original_data/irrigation/gmia_v5_aei_pct_360_720.npy'))
-    fvc = read_data(data_path('Proj1VD/original_data/Landcover/VCF5KYR/vcf5kyr_v001/VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
+    irrigation = read_data(data_path('gmia_v5_aei_pct_360_720.npy'))
+    fvc = read_data(data_path('VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
     vegetation_cover = np.nanmean(fvc[0, :, :, :] + fvc[1, :, :, :], axis=0)
 
     # overall sensitivity of obs
-    sensitivity_ens = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
+    sensitivity_ens = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
     sensitivity_ens[:,3, :, :, :][sensitivity_ens[:,4,:,:,:]>0.01]=np.nan
     # sensitivity_ens[:,3, :, :, :][sensitivity_ens[:,3,:,:,:]<0]=np.nan
     overall_sen1 = sensitivity_ens[5, 3, 1:3, :, :] # obs
 
     # overall sensitivity of model
-    sensitivity_ens = read_data(data_path('study2/results/result_april/TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))
+    sensitivity_ens = read_data(data_path('TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))
     sensitivity_ens[:, 3, :, :, :][sensitivity_ens[:, 4, :, :, :] > 0.01] = np.nan
     # sensitivity_ens[:,3, :, :, :][sensitivity_ens[:,3,:,:,:]<0]=np.nan
     overall_sen2 = sensitivity_ens[9, 3, 1:3, :, :]  # model
@@ -104,11 +89,11 @@ if __name__ == '__main__':
     # obs SM mean
     overall_SM1 = np.zeros((2,360,720))
     # ERA5-land
-    overall_SM1[0, :, :] = np.nanmean(read_data(data_path('study2/original_data/ERA5-Land/0d50_monthly/ESM-mm-4obs_SMsurf_1982_2017_monthly_growseason_yearlymean.npy'))[:, 0, :, :], axis=0)
-    overall_SM1[1, :, :] = np.nanmean(read_data(data_path('study2/original_data/ERA5-Land/0d50_monthly/ESM-mm-4obs_SMroot_1982_2017_monthly_growseason_yearlymean.npy'))[:, 0, :, :], axis=0)
+    overall_SM1[0, :, :] = np.nanmean(read_data(data_path('ESM-mm-4obs_SMsurf_1982_2017_monthly_growseason_yearlymean.npy'))[:, 0, :, :], axis=0)
+    overall_SM1[1, :, :] = np.nanmean(read_data(data_path('ESM-mm-4obs_SMroot_1982_2017_monthly_growseason_yearlymean.npy'))[:, 0, :, :], axis=0)
     # model SM mean
-    SMsurf_ens = np.nanmean(read_data(data_path('study2/original_data/TRENDY_climate/v7_msl/TRENDYS3-10model_SMsurf_1982_2017_monthly_growseason_yearlymean.npy')),axis=0)
-    SMroot_ens = np.nanmean(read_data(data_path('study2/original_data/TRENDY_climate/v7_msl/TRENDYS3-10model_SMroot_1982_2017_monthly_growseason_yearlymean.npy')),axis=0)
+    SMsurf_ens = np.nanmean(read_data(data_path('TRENDYS3-10model_SMsurf_1982_2017_monthly_growseason_yearlymean.npy')),axis=0)
+    SMroot_ens = np.nanmean(read_data(data_path('TRENDYS3-10model_SMroot_1982_2017_monthly_growseason_yearlymean.npy')),axis=0)
     overall_SM2 = np.zeros((2,360,720))
     overall_SM2[0,:,:] = SMsurf_ens[9,:,:]
     overall_SM2[1,:,:] = SMroot_ens[9,:,:]
@@ -171,7 +156,7 @@ if __name__ == '__main__':
     ax.legend(loc=(0.7,0.7), frameon=False) # loc: a pair of float, indicating percentage of position in a figure
 
 
-    plt.savefig('/Net/Groups/BGI/scratch/wantong/study2/results/result_oct/figure2/fig2.jpg', bbox_inches='tight')
+    plt.savefig(data_path('fig2.jpg'), bbox_inches='tight')
 
     print('end')
 
