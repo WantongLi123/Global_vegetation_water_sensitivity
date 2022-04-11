@@ -12,7 +12,6 @@ from matplotlib import rc
 import matplotlib.gridspec as gridspec
 import pymannkendall as mk
 import math
-# matplotlib.font_manager._rebuild()
 
 rc('font',**{'family':'sans-serif','sans-serif':['Arial']})
 plt.rcParams.update({'font.size': 5})
@@ -24,7 +23,7 @@ unit2 = ' ($\mathregular{mm^{-1}}$)'
 
 def data_path(filename):
     file_path = "{path}/{filename}".format(
-        path="/Net/Groups/BGI/scratch/wantong",
+        path="...your_path...",
         filename=filename
     )
     return file_path
@@ -221,36 +220,42 @@ def plot_with_interquartile(ax, ELAI, TrendyS3):
     return(slope1, slope2, p1, p2)
 
 if __name__ == '__main__':
-    log_string = 'data-processing :'
+    log_string = 'log:'
 
-    Sensi_3Y = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_3Yblock.npy'))
-    Sensi_all = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
-    Sensi_all_ELAI = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[5,:,:, :, :]
-    Sensi_all_TRENDY = read_data(data_path('study2/results/result_april/TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[9, :, :, :, :]
+    Sensi_all = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
+    Sensi_all_ELAI = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[5,:,:, :, :]
+    Sensi_all_TRENDY = read_data(data_path('TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))[9, :, :, :, :]
 
-    # Trend = trend_cal(Sensi_3Y, Sensi_all, Sensi_all_ELAI,Sensi_all_TRENDY)
-    # np.save(data_path('study2/results/result_oct/VOD_SM12_ERA5-land_monthly_1988_2017_0d50_3Yblock_SensiTrend'), Trend)
-    # Trend = np.zeros((6,2,2,360,720),dtype=np.float32)
-    # for v in range(6):
-    #     Trend[v,:,:,:,:] = trend_cal(Sensi_3Y[v,:,:,:, :, :], Sensi_all[v,:,:, :, :], Sensi_all_ELAI, Sensi_all_TRENDY)
-    # np.save(data_path('study2/results/result_oct/ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend'), Trend)
+    # obtain obs LAI sensitivity trends
+    Sensi_3Y = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_3Yblock.npy'))
+    Trend = trend_cal(Sensi_3Y[5,:,:,:, :, :], Sensi_all[5,:,:, :, :], Sensi_all_ELAI, Sensi_all_TRENDY)
+    np.save(data_path('ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend'), Trend)
+    
+    # obtain model LAI sensitivity trends
+    Sensi_3Y = read_data(data_path('TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_3Yblock_SM13modelOUT.npy'))
+    Trend = trend_cal(Sensi_3Y[9,:,:,:, :, :], Sensi_all[9,:,:, :, :], Sensi_all_ELAI, Sensi_all_TRENDY)
+    np.save(data_path('TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend'), Trend)
 
-    ind_LAI = 5
+    # load data
     Sensi_3Y_trend_slope = np.zeros((2,360,720)) * np.nan
     Sensi_3Y_trend_p = np.zeros((2,360,720)) * np.nan
-    Sensi_3Y_trend_slope[0,:,:] = read_data(data_path('study2/results/result_oct/ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[ind_LAI, 0,1,:,:] #[0,0,:,:] for surf
-    Sensi_3Y_trend_p[0,:,:] = read_data(data_path('study2/results/result_oct/ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[ind_LAI, 1,1,:,:] #[1,0,:,:] for surf
-    Sensi_3Y_trend_slope[1, :, :] = read_data(data_path('study2/results/result_july/TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[0,1,:,:] #[0,0,:,:] for surf
-    Sensi_3Y_trend_p[1, :, :] = read_data(data_path('study2/results/result_july/TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[1,1,:,:] #[1,0,:,:] for surf
+    # obs
+    Sensi_3Y_trend_slope[0,:,:] = read_data(data_path('ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[0,1,:,:] #[0,0,:,:] for near-surface
+    Sensi_3Y_trend_p[0,:,:] = read_data(data_path('ELAI_SM12_ERA5-land_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[1,1,:,:] #[1,0,:,:] for near-surface
+    # model
+    Sensi_3Y_trend_slope[1, :, :] = read_data(data_path('TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[0,1,:,:] #[0,0,:,:] for near-surface
+    Sensi_3Y_trend_p[1, :, :] = read_data(data_path('TRENDY_S3_SM12_monthly_1982_2017_0d50_3Yblock_SensiTrend.npy'))[1,1,:,:] #[1,0,:,:] for near-surface
+    # leave NaN out
     Sensi_3Y_trend_p[0, :, :][np.isnan(Sensi_3Y_trend_p[1, :, :])] = np.nan
     Sensi_3Y_trend_p[1, :, :][np.isnan(Sensi_3Y_trend_p[0, :, :])] = np.nan
-    LAI = np.nanmean(read_data(data_path('study2/original_data/LAI/EnLAI_5mean_1982_2018_monthly_0.5.npy')),axis=0)
-
-    # mask VCF<5%, irrigation>10%
-    irrigation = read_data(data_path('study2/original_data/irrigation/gmia_v5_aei_pct_360_720.npy'))
-    fvc = read_data(data_path('Proj1VD/original_data/Landcover/VCF5KYR/vcf5kyr_v001/VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
+    
+    # mask VCF<5%, irrigation>10%, LAI is not NaN
+    irrigation = read_data(data_path('gmia_v5_aei_pct_360_720.npy'))
+    fvc = read_data(data_path('VCF_1982_to_2016_0Tree_1nonTree_yearly.npy'))
     vegetation_cover = np.nanmean(fvc[0, :, :, :] + fvc[1, :, :, :], axis=0)
+    LAI = np.nanmean(read_data(data_path('EnLAI_5mean_1982_2018_monthly_0.5.npy')),axis=0)
 
+    # group sensitivity trends results into 6 classes: irrigated/non-vegetated, non-soil-moisture controlled, decreasing trends (significant, non-significant), increasing trends (significant, non-significant)
     sen_trend = np.zeros((2, 360, 720)) * np.nan
     for v in range(2):
         sen_trend[v, :, :][LAI > 0] = 0
@@ -268,7 +273,7 @@ if __name__ == '__main__':
                     elif Sensi_3Y_trend_p[v, row, col] <= 0.1 and Sensi_3Y_trend_slope[v, row, col] > 0:
                         sen_trend[v, row, col] = 5
 
-    # create figures
+    # create figure frame
     fig = plt.figure(figsize=[4, 2.2], dpi=300, tight_layout=True)
     gs = gridspec.GridSpec(1, 2, width_ratios=[1, 2], wspace=0.03) # distinguish two columns for A and B,C
     gs00 = gridspec.GridSpecFromSubplotSpec(4, 1, height_ratios=[1,1,0.05,0.12], subplot_spec=gs[1], hspace=0) # distinguish 4 rows for B,C
@@ -280,7 +285,7 @@ if __name__ == '__main__':
         colorlist.append(color_list(color))
     cmap = matplotlib.colors.ListedColormap(colorlist)
 
-    ########## draw global maps of sensitivity trends for obs, models
+    ########## draw global maps of sensitivity trends for obs, models: fig3 (b) and (c)
     ax00 = fig.add_subplot(gs00[0])
     graph(ax00, sen_trend[0, 30:300, :], cmap)
     ax00.set_title('Trends of ' + tit[1] + unit1) # change here if near-surf
@@ -308,21 +313,22 @@ if __name__ == '__main__':
     matplotlib.colorbar.ColorbarBase(ax20, ticks=[0.125,0.375,0.625,0.875], cmap=cmap, orientation='horizontal')
     ax20.set_xticklabels(label)
 
-    ######### draw temporal variations of sensitivity for obs, models
-    # Sensi_3Y_obs = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_3Yblock.npy'))
-    # Sensi_all_obs = read_data(data_path('study2/results/result_oct/Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
-    # Sensi_3Y_TrendyS3 = read_data(data_path('study2/results/result_april/TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_3Yblock_SM13modelOUT.npy'))
-    # Sensi_all_TrendyS3 = read_data(data_path('study2/results/result_april/TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))
-    # Temporal_vari_sensi_ELAI = temporal_vari_sen(6, Sensi_3Y_obs, Sensi_all_obs, Sensi_all_ELAI, Sensi_all_TRENDY)
-    # # Temporal_vari_sensi_TrendyS3 = temporal_vari_sen(9, Sensi_3Y_TrendyS3, Sensi_all_TrendyS3, Sensi_all_ELAI, Sensi_all_TRENDY)
-    # np.save(data_path('study2/results/result_oct/Temporal_vari_sensi_ELAI_fig3'), Temporal_vari_sensi_ELAI)
-    # # np.save(data_path('study2/results/result_oct/Temporal_vari_sensi_TrendyS3_fig3'), Temporal_vari_sensi_TrendyS3)
+    # calculate temporal variations of sensitivity for obs, models: fig3 (a)
+    Sensi_3Y_obs = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_3Yblock.npy'))
+    Sensi_all_obs = read_data(data_path('Ensemble-6obs_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear.npy'))
+    Sensi_3Y_TrendyS3 = read_data(data_path('TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_3Yblock_SM13modelOUT.npy'))
+    Sensi_all_TrendyS3 = read_data(data_path('TRENDYS3-10model_6v_monthly_1982_2017_0d50_ContributionSensitivity_allYear_SM13modelOUT.npy'))
+    Temporal_vari_sensi_ELAI = temporal_vari_sen(6, Sensi_3Y_obs, Sensi_all_obs, Sensi_all_ELAI, Sensi_all_TRENDY)
+    Temporal_vari_sensi_TrendyS3 = temporal_vari_sen(9, Sensi_3Y_TrendyS3, Sensi_all_TrendyS3, Sensi_all_ELAI, Sensi_all_TRENDY)
+    np.save(data_path('Temporal_vari_sensi_ELAI_fig3'), Temporal_vari_sensi_ELAI)
+    np.save(data_path('Temporal_vari_sensi_TrendyS3_fig3'), Temporal_vari_sensi_TrendyS3)
 
-    Temporal_vari_sensi_ELAI = read_data(data_path('study2/results/result_oct/Temporal_vari_sensi_ELAI_fig3.npy'))
-    Temporal_vari_sensi_TrendyS3 = read_data(data_path('study2/results/result_july/Temporal_vari_sensi_TrendyS3_fig3.npy'))
+    # draw temporal variations of sensitivity for obs, models: fig3 (a)
+    Temporal_vari_sensi_ELAI = read_data(data_path('Temporal_vari_sensi_ELAI_fig3.npy'))
+    Temporal_vari_sensi_TrendyS3 = read_data(data_path('Temporal_vari_sensi_TrendyS3_fig3.npy'))
     ax1 = fig.add_subplot(gs[0])
-    slope1, slope2, p1, p2 = plot_with_interquartile(ax1, Temporal_vari_sensi_ELAI[:,1,:,:,:], Temporal_vari_sensi_TrendyS3[:,1,:,:,:]) #[:,0,:,:,:] for surf
-    ax1.set_ylabel(tit[1] + unit2) # change here if near-surf
+    slope1, slope2, p1, p2 = plot_with_interquartile(ax1, Temporal_vari_sensi_ELAI[:,1,:,:,:], Temporal_vari_sensi_TrendyS3[:,1,:,:,:]) #[:,0,:,:,:] for near-surface
+    ax1.set_ylabel(tit[1] + unit2) # change here if near-surface
     ax1.set_xlabel('Year')
     ax1.set_ylim(-0.0003,0,0.0003)
     ax1.set_yticks([-0.0003,0,0.0003])
@@ -333,12 +339,11 @@ if __name__ == '__main__':
     ax1.text(1982, 0.00026, '8.0'+eee+'**', color='black')
     ax1.text(1982, 0.00022, '-4.0'+eee, color='darkorange')
     ax1.text(1982, 0.00018, '($\mathregular{mm^{-1}}$ per 3 years)')
-    # p<0.01, p>0.1, p<0.01, p<0.1
 
     ax1.text(1962, 0.00028, '(a)')
     ax1.text(2019, 0.00028, '(b) Obs')
     ax1.text(2019, 0, '(c) Model')
 
-    plt.savefig(data_path('study2/results/result_oct/figure2/fig3.jpg'), bbox_inches='tight')
+    plt.savefig(data_path('fig3.jpg'), bbox_inches='tight')
 
     print('end')
