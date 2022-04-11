@@ -17,3 +17,12 @@ i) All processed data are in NumPy array format for Python;
 ii) Original data are shared with public links in the paper. 
 
 ### References
+i) Random forest modelling refers to: 
+
+Breiman, L. Random forests. Machine Learning 45, 5–32 (2001).
+
+ii) SHAP values to interpret contributions of predictors to target variables refers to:
+
+Lundberg, S. M. & Lee, S. I. A unified approach to interpreting model predictions. (2017);
+
+Molnar, C. Interpretable Machine Learning: A Guide for Making Black Box Models Explainable (2021). [online: https://christophm.github.io/interpretable-ml-book/]
