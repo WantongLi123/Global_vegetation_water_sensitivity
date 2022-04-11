@@ -277,7 +277,7 @@ if __name__ == '__main__':
     ax7.text(-0.0051, 0.171, '(d) Model')
     ax7.text(-0.004, -0.05, '(g) Model-Obs')
     ax7.text(0.0009, -0.05, '(h) Corr(Model,Obs)')
-    plt.savefig('...your_path.../fig1.jpg', bbox_inches='tight')
+    plt.savefig(data_path('fig1.jpg'), bbox_inches='tight')
 
 
     print('end')
