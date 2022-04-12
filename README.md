@@ -9,6 +9,9 @@ We use the demo for transparency and to demonstrate the application of sensitivi
 
 #### We are happy to answer your questions! Contact: Wantong Li (wantong@bgc-jena.mpg.de) 
 
+### Conda environment installation
+Please use the base.yml to set up the environment for runing provided codes. The Linux command for environment installation: conda env create -f base.yml
+
 ### The guide of demo_of_sensitivity_analysis
 i) To save the runtime, one satellite LAI product and one soil moisture reanalysis are used as an example, while in real cases we calculate many times of sensitivity results using different satellite and land surface modelled LAI and soil moisture products;
 
