@@ -1,11 +1,15 @@
 # Global_vegetation_water_sensitivity
 This repository contains two parts for a paper to be published as: Li, W., Migliavacca, M., Forkel, M., Denissen, J.M.C., Reichstein, M., Yang, H., Duveiller, G., Weber, U. and Orth, R. (2022). Widespread increasing vegetation sensitivity to soil moisture (Under review).
 
-i) Demo codes and data required to calculate overall and 3-year-block LAI sensitivities to soil moisture;
+i) Demo codes required to calculate overall and 3-year-block LAI sensitivities to soil moisture;
 
-ii) Codes required to reproduce main figures in the paper. The raw datasets mentioned below are used to compute the analysis results. These analysis results are required to produce the final figures and are stored at 'zenodo link' (as the data size is big).
+ii) Codes required to reproduce main figures in the paper.
 
-We use the demo for transparency and to demonstrate the application of sensitivity analysis using machine learning.
+Note: 
+
+i) We use demo codes for transparency and to demonstrate the application of sensitivity analysis using machine learning. The raw data formatted as .npy are required to compute sensitivity results and are stored at 'zenodo link';
+
+ii) The raw datasets used to compute all analysis results are shared with public links in the paper. These analysis results are required to produce the final figures and are stored at 'zenodo link'.
 
 #### We are happy to answer your questions! Contact: Wantong Li (wantong@bgc-jena.mpg.de) 
 
@@ -20,7 +24,7 @@ ii) To save the runtime, European domains are used instead of the global scale w
 ### The guide of figure_codes
 i) All processed data are in NumPy array format for Python;
 
-ii) Original data are shared with public links in the paper. 
+ii) Original data are all shared with public links in the paper. 
 
 ### References
 i) Random forest modelling refers to: 
