@@ -7,9 +7,9 @@ ii) Codes required to reproduce main figures in the paper.
 
 Note: 
 
-i) We use demo codes for transparency and to demonstrate the application of sensitivity analysis using machine learning. The raw data formatted as .npy are required to compute sensitivity results and are stored at 'zenodo link';
+i) We use demo codes for transparency and to demonstrate the application of sensitivity analysis using machine learning. The raw data formatted as .npy are required to compute sensitivity results and are stored at Zenodo https://doi.org/10.5281/zenodo.6445997;
 
-ii) The raw datasets used to compute all analysis results are shared with public links in the paper. These analysis results are required to produce the final figures and are stored at 'zenodo link'.
+ii) The raw datasets used to compute all analysis results are shared with public links in the paper. These analysis results are required to produce the final figures and are stored at Zenodo https://doi.org/10.5281/zenodo.6445997.
 
 #### We are happy to answer your questions! Contact: Wantong Li (wantong@bgc-jena.mpg.de) 
 
