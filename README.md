@@ -3,7 +3,7 @@ This repository contains two parts for a paper to be published as: Li, W., Migli
 
 i) Demo codes and data required to calculate overall and 3-year-block LAI sensitivities to soil moisture;
 
-ii) Codes required to reproduce main figures in the paper. The data for the figures are available from 'zenodo link' as the data size is big.
+ii) Codes required to reproduce main figures in the paper. The raw datasets mentioned below are used to compute the analysis results. These analysis results are required to produce the final figures and are stored at 'zenodo link' (as the data size is big).
 
 We use the demo for transparency and to demonstrate the application of sensitivity analysis using machine learning.
 
