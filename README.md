@@ -10,6 +10,9 @@ We use the demo for transparency and to demonstrate the application of sensitivi
 #### We are happy to answer your questions! Contact: Wantong Li (wantong@bgc-jena.mpg.de) 
 
 ### The guide of demo_of_sensitivity_analysis
+i) To save the runtime, one satellite LAI product and one soil moisture reanalysis are used as an example, while in real cases we calculate many times of sensitivity results using different satellite and land surface modelled LAI and soil moisture products;
+
+ii) To save the runtime, European domains are used instead of the global scale when calculating sensitivity results.
 
 ### The guide of figure_codes
 i) All processed data are in NumPy array format for Python;
